@@ -1,27 +1,29 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const { pool } = require('./src/config/database');
 dotenv.config();
 const port = process.env.PORTA
 const app = express();
 app.use(express.json());
 
-// banco de dados
-const bd_reservas = [];
 
 // listar reservas
-app.get('/reservas', (req, res) => {
+app.get('/reservas', async(req, res) => {
     try {
-        if (bd_reservas.length === 0) {
+
+        const consulta = `select * from agenda`
+        const reservas = await pool.query(consulta);
+        if (reservas.rows.length === 0) {
             return res.status(200).json({ mensagem: "Banco de dados vazio" });
         }
 
-        res.status(200).json(bd_reservas);
+        res.status(200).json(reservas.rows);
 
     } catch (error) {
         res.status(500).json(
             {
               msg: "Erro ao buscar reserva",
-              erro: error.mensagem
+              erro: error.message
             }
         );
     }
@@ -29,16 +31,23 @@ app.get('/reservas', (req, res) => {
 
 // listar reserva por id
 
-app.get('/reservas/:id', (req, res) => {
+app.get('/reservas/:id', async(req, res) => {
     try {
-        const id = req.params.id;
-        const reservas = bd_reservas.find(reserva => reserva.id === id);
 
-        if (!reservas) {
-            return res.status(404).json({mensagem: "Reserva não encontrada"});
+        const id = req.params.id;
+        if (!id) {
+            return res.status(404).json({mensagem: "Informe o id"})
         }
 
-        res.status(200).json(reservas);
+        const parametro = [id];
+      
+        const consulta = `select * from agenda where id = $1`;
+        const reservas = await pool.query(consulta, parametro);
+        if (reservas.rows.length === 0) {
+            return res.status(200).json({ mensagem: "Banco de dados vazio" });
+        }
+
+        res.status(200).json(reservas.rows);
 
     } catch (error) {
         res.status(500).json(
@@ -52,20 +61,25 @@ app.get('/reservas/:id', (req, res) => {
 
 // criar nova reserva
 
-app.post('/reservas', (req, res) => {
+app.post('/reservas', async (req, res) => {
     try {
-        const { id, usuario, sala, data_horario_inicio, data_horario_termino, status } = req.body;
-        if (!id || !usuario || !sala || !data_horario_inicio || !data_horario_termino || !status) {
+        const { usuario, sala, data_horario_inicio, data_horario_termino, status } = req.body;
+
+        if (!usuario || !sala || !data_horario_inicio || !data_horario_termino || !status) {
             return res.status(200).json({ mensagem: "todos os dados devem ser informados" })
         }
-        const novaReserva = { id, usuario, sala, data_horario_inicio, data_horario_termino, status };
-        bd_reservas.push(novaReserva);
+        
+        const novaReserva = [ usuario, sala, data_horario_inicio, data_horario_termino, status ];
+        const consulta = `insert into agenda (usuario, sala, data_horario_inicio, data_horario_termino, status) values ($1, $2, $3, $4, $5) returning * `
+
+        await pool.query(consulta, novaReserva);
+
         res.status(201).json({ mensagem: "Reserva feita com sucesso!" });
     } catch (error) {
         res.status(500).json(
             {
               msg: "Erro ao fazer reserva",
-              erro: error.mensagem
+              erro: error.message
             }
         );
     }
@@ -73,32 +87,36 @@ app.post('/reservas', (req, res) => {
 
 // atualizar horário ou mudar status
 
-app.put('/reservas/:id', (req, res) => {
+app.put('/reservas/:id', async(req, res) => {
     try {
         const id = req.params.id;
         if (!id) {
             return res.status(404).json({mensagem: "Informe o id"})
         }
-        
-        const reserva = bd_reservas.find((reservas) => reservas.id === id);
-        if(!reserva){
-          return res.status(404).json({mensagem: "Reserva não encontrada"});
-        }
       
         const {novoHorario, novoStatus} = req.body;
-      
-        if (reserva) {
-            reserva.data_horario_inicio = novoHorario;
-            reserva.status = novoStatus
+
+        const parametro = [id];
+        const consulta = `select * from agenda where id=$1`;
+        const resultado = await pool.query(consulta, parametro);
+
+        if(resultado.rows.length === 0){
+            return resposta.status(404).json({mensagem: "Produto não encontrado"})
         }
-      
+
+        const dados = [id, novoHorario, novoStatus];
+        const consulta2 = `update agenda set data_horario_inicio = $2, status = $3 where id = $1 returning *`;
+
+        await pool.query(consulta2, dados)
+
+
         res.status(200).json({msg: "Reserva atualizada com sucesso"});
 
     } catch (error) {
         res.status(500).json(
             {
               msg: "Erro ao atualizar reserva",
-              erro: error.mensagem
+              erro: error.message
             }
           );
     }
@@ -106,23 +124,28 @@ app.put('/reservas/:id', (req, res) => {
 
 // Deletar reserva
 
-app.delete('/reservas/:id', (req, res) => {
+app.delete('/reservas/:id', async(req, res) => {
     try {
-        
         const id = req.params.id;
-        const index = bd_reservas.findIndex(reserva => reserva.id === id);
-        if (index === -1) {
-          return res.status(404).json({mensagem: "Reserva não encontrada"});
+        const parametro = [id];
+        const consulta = `select * from agenda where id=$1`;
+        const resultado = await pool.query(consulta, parametro);
+
+        if (resultado.rows.length === 0) {
+        return res.status(404).json({mensagem: "Reserva não encontrado"});
         }
-    
-        bd_reservas.splice(index, 1);
+
+        const consulta2 = `delete from agenda where id = $1`;
+        
+        await pool.query(consulta2, parametro);
+
         res.status(200).json({mensagem: "reserva deletada com sucesso"})
 
     } catch (error) {
         res.status(500).json(
             {
               msg: "Erro ao deletar reserva",
-              erro: error.mensagem
+              erro: error.message
             }
           );
     }

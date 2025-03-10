@@ -4,7 +4,7 @@ GET http://localhost:3000/reservas
 ###
 
 ### Rota para buscar uma reserva específica
-GET http://localhost:3000/reservas/1
+GET http://localhost:3000/reservas/3
 
 ###
 
@@ -14,9 +14,8 @@ POST http://localhost:3000/reservas
 Content-Type: application/json
 
 {
-    "id":"2",
     "usuario":"Valtemir Lima 2",
-    "sala":"2",
+    "sala":"B2",
     "data_horario_inicio": "18/02/2025 16:24",
     "data_horario_termino": "18/02/2025 17:24",
     "status": "reservado"
@@ -25,18 +24,18 @@ Content-Type: application/json
 ###
 
 ### Rota para atualizar reserva
-PUT http://localhost:3000/reservas/1
+PUT http://localhost:3000/reservas/4
 Content-Type: application/json
 
 {
-    "novoHorario": "19/02/2025 16:30",
+    "novoHorario": "2025-03-10 17:00:00",
     "novoStatus": "cancelado"
 }
 
 ###
 
 ### Roda para excluir reserva
-DELETE http://localhost:3000/reservas/1
+DELETE http://localhost:3000/reservas/2
 Content-Type: application/json
 
 ###
