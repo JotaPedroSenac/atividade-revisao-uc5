@@ -14,8 +14,8 @@ POST http://localhost:3000/reservas
 Content-Type: application/json
 
 {
-    "usuario":"Valtemir Lima 2",
-    "sala":"B2",
+    "usuario":"Valtemir Lima 10",
+    "sala":"C2",
     "data_horario_inicio": "18/02/2025 16:24",
     "data_horario_termino": "18/02/2025 17:24",
     "status": "reservado"
@@ -24,7 +24,7 @@ Content-Type: application/json
 ###
 
 ### Rota para atualizar reserva
-PUT http://localhost:3000/reservas/4
+PUT http://localhost:3000/reservas/8
 Content-Type: application/json
 
 {
@@ -35,7 +35,7 @@ Content-Type: application/json
 ###
 
 ### Roda para excluir reserva
-DELETE http://localhost:3000/reservas/2
+DELETE http://localhost:3000/reservas/8
 Content-Type: application/json
 
 ###
