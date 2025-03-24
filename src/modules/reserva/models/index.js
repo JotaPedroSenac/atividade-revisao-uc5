@@ -16,13 +16,13 @@ class ReservaModel{
     static async listar(){
         const consulta = `select * from agenda`;
         const reservas = await pool.query(consulta);
-        reservas.rows;
+        return reservas.rows;
     }
     static async listarPorID(id){
         const dados = [id];
         const consulta = `select * from agenda where id = $1`;
         const reserva = await pool.query(consulta, dados);
-        reserva.rows;
+        return reserva.rows;
     }
     static async excluirPorID(id){
         const dados = [id];
