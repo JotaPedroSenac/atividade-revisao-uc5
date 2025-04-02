@@ -1,16 +1,16 @@
-const ReservaModel = require('../models/index');
+const ClienteModel = require('../models/index');
 
-class ReservaController{
+class ClienteController{
     static async criar(req, res){
         try {
-            const { usuario, sala, data_horario_inicio, data_horario_termino, status } = req.body;
-            if (!usuario || !sala || !data_horario_inicio || !data_horario_termino || !status) {
+            const { usuario } = req.body;
+            if (!usuario) {
                 return res.status(200).json({ mensagem: "todos os dados devem ser informados" })
             }
-            const novaReserva = await ReservaModel.criar(usuario, sala, data_horario_inicio, data_horario_termino, status);
-            res.status(201).json({ mensagem: "Reserva criada com sucesso", reserva: novaReserva });
+            const novoCliente = await ClienteModel.criar(usuario);
+            res.status(201).json({ mensagem: "Cliente criado com sucesso", cliente: novoCliente });
         } catch (error) {
-            res.status(500).json({ mensagem: "Erro ao criar reserva!", erro: error.message })
+            res.status(500).json({ mensagem: "Erro ao cadastrar Cliente!", erro: error.message })
         }
     }
     static async editar(req, res){
@@ -75,4 +75,4 @@ class ReservaController{
     }
 }
 
-module.exports = ReservaController;
+module.exports = ClienteController;
