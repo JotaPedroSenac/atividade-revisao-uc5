@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const usuarioRoutes = require('./src/modules/cliente/routes/');
+const enderecoRoutes = require('./src/modules/endereco/routes/');
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(express.json());
 
 app.use(usuarioRoutes); 
+app.use(enderecoRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
