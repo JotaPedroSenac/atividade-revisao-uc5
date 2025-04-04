@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const reservaRoutes = require('./src/modules/reserva/routes/index');
+const usuarioRoutes = require('./src/modules/cliente/routes/');
 
 dotenv.config();
 
@@ -9,7 +9,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(reservaRoutes); 
+app.use(usuarioRoutes); 
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);

@@ -22,6 +22,13 @@ CREATE TABLE IF NOT EXISTS Coworking_Endereco (
     constraint fk_cliente foreign key (cliente_id) references Coworking_Cliente(id)
 );
 
+-- Passo 1: Remover a restrição existente
+ALTER TABLE Coworking_Endereco DROP CONSTRAINT fk_cliente;
+
+-- Passo 2: Adicionar novamente a chave estrangeira com ON DELETE CASCADE
+ALTER TABLE Coworking_Endereco
+ADD CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) 
+REFERENCES Coworking_Cliente(id) ON DELETE CASCADE;
 
 -- tabela 3 - Reserva
 
@@ -37,6 +44,21 @@ CREATE TABLE IF NOT EXISTS Coworking_Reserva (
     constraint fk_endereco foreign key (endereco_id) references Coworking_Endereco(id)
     
 );
+
+ALTER TABLE Coworking_Reserva DROP CONSTRAINT fk_cliente;
+
+ALTER TABLE Coworking_Reserva
+ADD CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) 
+REFERENCES Coworking_Cliente(id) ON DELETE CASCADE;
+
+ALTER TABLE Coworking_Reserva DROP CONSTRAINT fk_endereco;
+
+ALTER TABLE Coworking_Reserva
+ADD CONSTRAINT fk_endereco FOREIGN KEY (endereco_id) 
+REFERENCES Coworking_Endereco(id) ON DELETE CASCADE;
+
+
+
 
 INSERT INTO Coworking_Cliente (usuario)
 VALUES ('Valtemir');
