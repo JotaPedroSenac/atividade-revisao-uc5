@@ -10,7 +10,7 @@ class ClienteController{
             const novoCliente = await ClienteModel.criar(usuario);
             res.status(201).json({ mensagem: "Cliente criado com sucesso", cliente: novoCliente });
         } catch (error) {
-            res.status(500).json({ mensagem: "Erro ao cadastrar Cliente!", erro: error.message })
+            res.status(500).json({ mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message })
         }
     }
     static async editar(req, res){
@@ -26,7 +26,7 @@ class ClienteController{
             }
             res.status(201).json({mensagem: "Usuário editada com sucesso", usuario: usuarioEditado});
         } catch (error) {
-            res.status(500).json({mensagem: "Erro ao editar o usuário!", erro: error.message})
+            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message})
         }
     }
     static async listar(req, res){
@@ -37,7 +37,7 @@ class ClienteController{
             }
             res.status(200).json(usuarios);
         } catch (error) {
-            res.status(500).json({mensagem: "Erro ao listar usuários!", erro: error.message})
+            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message})
         }
     }
     static async listarPorID(req, res){
@@ -49,7 +49,7 @@ class ClienteController{
             }
             res.status(200).json(usuario);
         } catch (error) {
-            res.status(500).json({mensagem: "Erro ao listar usuário!", erro: error.message})
+            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message})
         }
     }
     static async excluirPorID(req, res){
@@ -62,7 +62,7 @@ class ClienteController{
             await ClienteModel.excluirPorID(id);
             res.status(200).json({mensagem: "usuario deletado com sucesso"});
         } catch (error) {
-            res.status(500).json({mensagem: "Erro ao deletar usuario!", erro: error.message});
+            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message});
         }
     }
     static async excluirTodos(req, res){
@@ -70,7 +70,7 @@ class ClienteController{
             await ClienteModel.excluirTodos();
             res.status(200).json({mensagem: "Todos os usuários foram deletadas"});
         } catch (error) {
-            res.status(500).json({mensagem: "Erro ao deletar usuários!", erro: error.message});
+            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message});
         }
     }
 }

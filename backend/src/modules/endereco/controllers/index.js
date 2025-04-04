@@ -10,7 +10,7 @@ class EnderecoController{
             const novoEndereco = await EnderecoModel.criar(cliente_id, cep, numero, ponto_referencia);
             res.status(201).json({mensagem: "Endereço criado com sucesso", endereco: novoEndereco});
         } catch (error) {
-            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message})
+            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message});
         }
     }
 
@@ -23,7 +23,7 @@ class EnderecoController{
             }
             const enderecoAtualizado = await EnderecoModel.editar(cliente_id, cep, numero, ponto_referencia);
                 if(enderecoAtualizado.length === 0){
-                    return res.satus(400).json({mensagem: "Cliente está errada ou não existe"})
+                    return res.satus(400).json({mensagem: "Cliente está errado ou não existe"})
                 }
             res.status(201).json({mensagem: "Endereço atualizado com sucesso", endereco: enderecoAtualizado });
         } catch (error) {
@@ -39,7 +39,7 @@ class EnderecoController{
             }
             res.status(200).json(enderecos);
         } catch (error) {
-            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message})
+            res.status(500).json({mensagem: "Erro interno do servidor, tente novamente mais tarde!", erro: error.message});
         }
     }
 

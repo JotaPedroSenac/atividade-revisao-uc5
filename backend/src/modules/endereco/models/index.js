@@ -24,28 +24,41 @@ class EnderecoModel{
         return resultado.rows;
     }
 
-    static async editar(cliente_id, cep, numero, ponto_referencia){
+    static async editar(cliente_id, cep, numero, ponto_referencia) {
         const resposta = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-        const {logradouro, complemento, bairro, localidade, uf} = resposta.data;
+        const { logradouro, complemento, bairro, localidade, uf } = resposta.data;
+    
         const dados = [
-            cep, 
-            logradouro,
-            numero,
-            bairro, 
-            complemento,
-            uf,
-            localidade,
-            ponto_referencia,
-            cliente_id
-        ]
-
-        const consulta = `update Coworking_Endereco set cep = $1, logradouro = $2, numero = $3, complemento = $5, bairro = $4, localidade = $7, 
-        uf = $6, ponto_referencia = $8
-        where cliente_id = $9 returning *`;
-
+            cep,           // $1
+            logradouro,    // $2
+            numero,        // $3
+            bairro,        // $4
+            complemento,   // $5
+            uf,            // $6
+            localidade,    // $7
+            ponto_referencia, // $8
+            cliente_id     // $9
+        ];
+    
+        const consulta = `
+            UPDATE Coworking_Endereco 
+            SET 
+                cep = $1,
+                logradouro = $2,
+                numero = $3,
+                bairro = $4,
+                complemento = $5,
+                uf = $6,
+                localidade = $7,
+                ponto_referencia = $8
+            WHERE cliente_id = $9
+            RETURNING *
+        `;
+    
         const resultado = await pool.query(consulta, dados);
         return resultado.rows;
     }
+    
 
     static async listar(){
         const consulta = `select * from Coworking_Endereco`
@@ -76,6 +89,7 @@ class EnderecoModel{
         const resultado = await pool.query(consulta, dados);
         return resultado.rows
     }
+
 
 }
 
