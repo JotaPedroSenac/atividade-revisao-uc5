@@ -1,112 +1,161 @@
-# API de Gerenciamento de Reservas
 
-## Descrição
-Esta é uma API simples para gerenciar reservas de salas. Permite listar, criar, atualizar e excluir reservas.
+# API de Gerenciamento de Coworking
 
-## Tecnologias Utilizadas
+## 📖 Descrição
+API RESTful para gerenciar **clientes**, **endereços** e **reservas** em um espaço de coworking. Utiliza **PostgreSQL** como banco de dados e integração com a **API ViaCEP** para preenchimento automático de endereços com base no CEP informado.
+
+## 🚀 Tecnologias Utilizadas
 - Node.js
 - Express
+- PostgreSQL
+- Axios
 - dotenv
+- insomnia
 
-## Instalação
+## ⚙️ Instalação
+
 1. Clone este repositório:
-   ```sh
-   git clone https://github.com/seu-usuario/seu-repositorio.git
+   ```bash
+   git clone https://github.com/JotaPedroSenac/atividade-revisao-uc5.git
    ```
+
 2. Acesse a pasta do projeto:
-   ```sh
-   cd nome-do-projeto
+   ```bash
+   cd atividade-revisao-uc5
    ```
+
 3. Instale as dependências:
-   ```sh
+   ```bash
    npm install
    ```
-4. Crie um arquivo `.env` e defina a porta da aplicação:
+
+4. Crie um arquivo `.env` na raiz do projeto e defina as variáveis de conexão com o banco de dados:
    ```env
-   PORTA=SUA PORTA
+   DB_HOST=localhost
+   DB_PORT=porta
+   DB_USER=seu_usuario
+   DB_PASSWORD=sua_senha
+   DB_NAME=nome_do_banco
+   PORT=sua_porta
    ```
 
-## Como Rodar
+## ▶️ Como Rodar
+
 Execute o seguinte comando para iniciar o servidor:
-```sh
+```bash
 node index.js
 ```
 
-O servidor será iniciado em `http://localhost:PORTA` (na porta definida no arquivo `.env`).
+O servidor será iniciado em:  
+📍 `http://localhost:PORT` (a porta é definida no seu arquivo `.env`)
 
-## Rotas da API
+---
 
-### Listar todas as reservas
-- **GET** `/reservas`
-- **Resposta de sucesso (200)**
+## 📚 Rotas da API
+
+### 👤 Clientes
+
+#### 🔹 Listar todos os clientes
+- **GET** `/usuarios`
+- **Resposta:**
   ```json
   [
     {
-      "id": "1",
-      "usuario": "João Silva",
-      "sala": "101",
-      "data_horario_inicio": "2025-02-18T10:00:00",
-      "data_horario_termino": "2025-02-18T12:00:00",
-      "status": "finalizado"
+      "id": 1,
+      "nome": "João da Silva"
     }
   ]
   ```
 
-### Obter reserva por ID
-- **GET** `/reservas/:id`
-- **Resposta de sucesso (200)**
+#### 🔹 Obter cliente por ID
+- **GET** `/usuario/:id`
+
+#### 🔹 Criar cliente
+- **POST** `/usuarios`
+- **Corpo:**
   ```json
   {
-    "id": "1",
-    "usuario": "João Silva",
-    "sala": "101",
-    "data_horario_inicio": "2025-02-18T10:00:00",
-    "data_horario_termino": "2025-02-18T12:00:00",
-    "status": "reservado"
+    "nome": "Maria Souza"
   }
   ```
 
-### Criar uma nova reserva
+#### 🔹 Atualizar cliente
+- **PUT** `/usuario/:id`
+
+#### 🔹 Deletar cliente
+- **DELETE** `/usuario/:id`
+
+#### 🔹 Deletar todos os clientes
+- **DELETE** `/usuarios`
+
+---
+
+### 🏠 Endereços
+
+#### 🔹 Listar todos os endereços
+- **GET** `/enderecos`
+
+#### 🔹 Obter endereço por Cliente
+- **GET** `/endereco/:cliente_id`
+
+#### 🔹 Criar endereço (com CEP)
+- **POST** `/enderecos`
+- **Corpo:**
+  ```json
+  {
+    "cep": "01001-000",
+    "numero": "123",
+    "complemento": "Prox. ao mercadinho"
+  }
+  ```
+
+#### 🔹 Atualizar endereço
+- **PUT** `/endereco/:cliente_id`
+
+---
+
+### 📅 Reservas
+
+#### 🔹 Listar todas as reservas
+- **GET** `/reservas`
+
+#### 🔹 Obter reservas por cliente
+- **GET** `/reserva/cliente/:cliente_id`
+
+#### 🔹 Obter reservas por CEP
+- **GET** `/reserva/cep/:cep`
+
+#### 🔹 Obter reservas por sala
+- **GET** `/reserva/sala/:sala`
+
+#### 🔹 Criar nova reserva
 - **POST** `/reservas`
-- **Corpo da requisição:**
+- **Corpo:**
   ```json
   {
-    "id": "2",
-    "usuario": "Maria Souza",
+    "cliente_id": 1,
+    "endereco_id": 1,
     "sala": "102",
-    "data_horario_inicio": "2025-02-19T14:00:00",
-    "data_horario_termino": "2025-02-19T16:00:00",
+    "data_horario_inicio": "2025-04-10T14:00:00",
+    "data_horario_termino": "2025-04-10T16:00:00",
     "status": "reservado"
   }
   ```
-- **Resposta de sucesso (201):**
-  ```json
-  { "mensagem": "Reserva feita com sucesso!" }
-  ```
 
-### Atualizar uma reserva (horário ou status)
-- **PUT** `/reservas/:id`
-- **Corpo da requisição:**
-  ```json
-  {
-    "novoHorario": "2025-02-19T15:00:00",
-    "novoStatus": "finalizado"
-  }
-  ```
-- **Resposta de sucesso (200):**
-  ```json
-  { "msg": "Reserva atualizada com sucesso" }
-  ```
+#### 🔹 Atualizar reserva
+- **PUT** `/reserva/:cliente_id`
 
-### Deletar uma reserva
-- **DELETE** `/reservas/:id`
-- **Resposta de sucesso (200):**
-  ```json
-  { "mensagem": "reserva deletada com sucesso" }
-  ```
+#### 🔹 Cancelar reserva
+- **DELETE** `/reserva/:cliente_id`
 
-## Observações
-- A API utiliza um array em memória como banco de dados, logo os dados são perdidos ao reiniciar o servidor.
-- É recomendado adicionar um banco de dados real para armazenamento persistente.
+#### 🔹 Cancelar todas as reservas
+- **DELETE** `/reserva/`
 
+---
 
+## 📝 Observações
+- O endereço é preenchido automaticamente via integração com a [API ViaCEP](https://viacep.com.br/).
+- Certifique-se de que o banco de dados PostgreSQL está rodando corretamente.
+- As rotas retornam mensagens apropriadas de sucesso ou erro para cada operação.
+- recomendo uso do insomnia para teste da api.
+- Sinta-se à vontade para sugerir melhorias.
